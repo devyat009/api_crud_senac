@@ -1,1 +1,1 @@
-from . import UserController
+from . import UserController, AuthController

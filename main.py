@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.controller import UserController
+from app.controller import AuthController, UserController
 from app.database import engine
 from app.models import models
 
@@ -24,6 +24,7 @@ app.add_middleware(
 
 # Incluir routers
 app.include_router(UserController.router, prefix="/api/v1/users", tags=["users"])
+app.include_router(AuthController.router, prefix="/api/v1/auth", tags=["auth"])
 
 @app.get("/")
 def read_root():

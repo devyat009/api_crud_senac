@@ -73,16 +73,3 @@ def delete_user(user_id: str, repo: UserRepository = Depends(get_user_repository
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Usuário não encontrado"
         )
-
-@router.post("/login")
-def login(user_credentials: UserLogin, repo: UserRepository = Depends(get_user_repository)):
-    """Autenticar usuário"""
-    user = repo.authenticate(user_credentials.email, user_credentials.password)
-    
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email ou senha incorretos"
-        )
-    
-    return {"message": "Login realizado com sucesso", "user_id": user.id_user}
