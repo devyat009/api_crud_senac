@@ -8,7 +8,7 @@ class User(Base):
     
     id_user = Column(String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
     email = Column(String(255), unique=True, index=True, nullable=False)
-    senha_hash = Column(String(255), nullable=False)  # Senha criptografada
+    password_hash = Column(String(255), nullable=False)  # Senha criptografada
     nome = Column(String(100), nullable=False)
     telefone = Column(String(15), nullable=False)
     data_nascimento = Column(Date, nullable=False)

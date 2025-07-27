@@ -36,14 +36,14 @@ class UserRepository:
     
     def create(self, user_data: UserCreate) -> User:
         """Criar novo usuário"""
-        hashed_password = self.hash_password(user_data.senha)
+        hashed_password = self.hash_password(user_data.password)
         
         db_user = User(
             email=user_data.email,
             nome=user_data.nome,
             telefone=user_data.telefone,
             data_nascimento=user_data.data_nascimento,
-            senha_hash=hashed_password,
+            password_hash=hashed_password,
             cpf=user_data.cpf,
             cnpj=user_data.cnpj
         )
@@ -65,8 +65,8 @@ class UserRepository:
         update_data = user_data.model_dump(exclude_unset=True)
         
         # Se senha foi enviada, criptografar
-        if "senha" in update_data:
-            update_data["senha_hash"] = self.hash_password(update_data.pop("senha"))
+        if "password" in update_data:
+            update_data["password_hash"] = self.hash_password(update_data.pop("password"))
         
         for field, value in update_data.items():
             setattr(db_user, field, value)
@@ -91,8 +91,8 @@ class UserRepository:
     def authenticate(self, email: str, password: str) -> Optional[User]:
         """Autenticar usuário"""
         user = self.get_by_email(email)
-        
-        if not user or not self.verify_password(password, user.senha_hash):
+
+        if not user or not self.verify_password(password, user.password_hash):
             return None
         
         return user

@@ -24,14 +24,14 @@ class UserLogin(BaseModel):
 
 class UserCreate(UserBase):
     """Schema for user creation"""
-    senha: str = Field(..., min_length=8, description="Mínimo 8 caracteres")
+    password: str = Field(..., min_length=8, description="Mínimo 8 caracteres")
     confirm_password: str
-    cpf: Optional[str] = Field(None, pattern=r'^\d{11}$')
-    cnpj: Optional[str] = Field(None, pattern=r'^\d{14}$')
+    cpf: Optional[str] = None
+    cnpj: Optional[str] = None
 
     @model_validator(mode='after')
     def passwords_match(self):
-        if self.senha != self.confirm_password:
+        if self.password != self.confirm_password:
             raise ValueError('Senhas não coincidem')
         return self
     
@@ -45,9 +45,13 @@ class UserCreate(UserBase):
     @field_validator('cnpj')
     @classmethod
     def validate_cnpj(cls, v):
-        if v and len(v) != 14:
-            raise ValueError('CNPJ deve ter 14 dígitos')
-        return v
+        if v and v.strip():
+            # Remove caracteres não numéricos
+            cnpj_clean = re.sub(r'\D', '', v)
+            if len(cnpj_clean) != 14:
+                raise ValueError('CNPJ deve ter 14 dígitos')
+            return cnpj_clean
+        return None
 
 class UserUpdate(BaseModel):
     """Schema for update - all fields are optional"""
@@ -55,7 +59,7 @@ class UserUpdate(BaseModel):
     nome: Optional[str] = Field(None, min_length=2, max_length=100)
     telefone: Optional[str] = None
     data_nascimento: Optional[date] = None
-    senha: Optional[str] = Field(None, min_length=8)
+    password: Optional[str] = Field(None, min_length=8)
     cpf: Optional[str] = Field(None, pattern=r'^\d{11}$')
     cnpj: Optional[str] = Field(None, pattern=r'^\d{14}$')
     

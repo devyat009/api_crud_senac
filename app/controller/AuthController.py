@@ -19,4 +19,9 @@ def login(user_credentials: UserLogin, repo: UserRepository = Depends(get_user_r
             detail="Email ou senha incorretos"
         )
     
-    return {"message": "Login realizado com sucesso", "user_id": user.id_user}
+    return {
+        "message": "Login realizado com sucesso", 
+        "user_id": user.id_user,
+        "email": user.email,
+        "nome": user.nome
+    }

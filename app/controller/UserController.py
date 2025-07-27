@@ -16,21 +16,32 @@ def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
 def create_user(user: UserCreate, repo: UserRepository = Depends(get_user_repository)):
     """Criar um novo usuário"""
     
-    # Verificar se email já existe
-    if repo.get_by_email(user.email):
+    try:
+        # if repo.get_by_email(user.email):
+        #     raise HTTPException(
+        #         status_code=status.HTTP_400_BAD_REQUEST,
+        #         detail="Email já está registrado"
+        #     )
+        
+        # if user.cpf and repo.get_by_cpf(user.cpf):
+        #     raise HTTPException(
+        #         status_code=status.HTTP_400_BAD_REQUEST,
+        #         detail="CPF já está registrado"
+        #     )
+        
+        return repo.create(user)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Erro inesperado ao criar usuário: {e}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
+        
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email já está registrado"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor: " + str(e)
         )
-    
-    # Verificar se CPF já existe
-    if user.cpf and repo.get_by_cpf(user.cpf):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="CPF já está registrado"
-        )
-    
-    return repo.create(user)
 
 @router.get("/", response_model=List[UserResponse])
 def get_users(skip: int = 0, limit: int = 100, repo: UserRepository = Depends(get_user_repository)):
