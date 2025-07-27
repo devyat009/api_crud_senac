@@ -13,7 +13,7 @@ class User(Base):
     telefone = Column(String(15), nullable=False)
     data_nascimento = Column(Date, nullable=False)
     cpf = Column(String(11), unique=True, nullable=True, index=True)
-    cnpj = Column(String(14), unique=True, nullable=True, index=True)
+    cnpj = Column(String(14), nullable=True, index=True)
     
     # Campos de controle
     is_active = Column(Boolean, default=True, nullable=False)

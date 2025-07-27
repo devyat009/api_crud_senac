@@ -1,7 +1,10 @@
 # api_crud_senac
 
 
-
+# Uvicorn
+```
+uvicorn main:app --reload
+```
 
 # Criando a venv e ativando
 ```bash

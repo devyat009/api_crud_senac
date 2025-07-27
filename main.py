@@ -1,12 +1,14 @@
 import traceback
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.controller import AuthController, UserController
 from app.database import engine
 from app.models import models
+from app.utils.ErrorModel import create_error_response
 
-# Criar as tabelas
+# Create tables
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -46,6 +48,25 @@ async def cors_handler(request: Request, call_next):
                 "Access-Control-Allow-Credentials": "true",
             }
         )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    # Gets the first error (can be modified to handle multiple errors)
+    first_error = exc.errors()[0]
+    field = first_error.get('loc', [None])[-1]
+    message = first_error.get('msg', 'Erro de validação')
+    code = "VALIDATION_ERROR"
+    # Remove "Value error, " prefix if it exists
+    if message.startswith("Value error, "):
+        message = message.replace("Value error, ", "")
+    return JSONResponse(
+        status_code=422,
+        content=create_error_response(
+            message=message,
+            field=field,
+            code=code
+        )
+    )
 
 
 # Controllers
