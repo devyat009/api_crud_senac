@@ -1,5 +1,5 @@
 # Schemas Pydantic
-from .UserModel import UserBase, UserCreate, UserUpdate, UserResponse, UserPublic, UserLogin
+from .UserModel import *
 
 # Models SQLAlchemy
 from .models import User, Base

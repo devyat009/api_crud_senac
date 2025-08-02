@@ -4,7 +4,7 @@ from typing import Optional
 import re
 
 class UserBase(BaseModel):
-    """Base schema for user data"""
+    """Base model for user data"""
     email: EmailStr
     nome: str = Field(..., min_length=2, max_length=100)
     telefone: str = Field(..., min_length=10, max_length=15)
@@ -23,7 +23,7 @@ class UserLogin(BaseModel):
     password: str = Field(..., min_length=6)
 
 class UserCreate(UserBase):
-    """Schema for user creation"""
+    """Model for user creation"""
     password: str = Field(..., min_length=8, description="Mínimo 8 caracteres")
     confirm_password: str
     cpf: Optional[str] = None
@@ -54,7 +54,7 @@ class UserCreate(UserBase):
         return None
 
 class UserUpdate(BaseModel):
-    """Schema for update - all fields are optional"""
+    """Model for update - all fields are optional"""
     email: Optional[EmailStr] = None
     nome: Optional[str] = Field(None, min_length=2, max_length=100)
     telefone: Optional[str] = None
@@ -74,7 +74,7 @@ class UserUpdate(BaseModel):
         return v
 
 class UserResponse(UserBase):
-    """Schema for API response"""
+    """Model for API response"""
     id_user: str
     cpf: Optional[str] = None
     cnpj: Optional[str] = None
@@ -87,7 +87,7 @@ class UserResponse(UserBase):
     }
 
 class UserPublic(BaseModel):
-    """Schema for public user data (without sensitive information)"""
+    """Model for public user data (without sensitive information)"""
     id_user: str 
     nome: str
     email: EmailStr
@@ -96,3 +96,15 @@ class UserPublic(BaseModel):
     model_config = {
         "from_attributes": True
     }
+    
+class UserForgotPasswordRequest(BaseModel):
+    """Model for forgot password request"""
+    email: EmailStr
+    cpf: str
+    data_nascimento: date
+
+
+class UserChangePasswordRequest(BaseModel):
+    user_id: str
+    password: str
+    confirm_password: str
