@@ -1,3 +1,4 @@
+from datetime import date
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.models import User, UserCreate, UserUpdate
@@ -96,3 +97,26 @@ class UserRepository:
             return None
         
         return user
+    
+    def confirm_forgot_password_data(self, email: str, cpf: str, data_nascimento: date) -> Optional[User]:
+        """Confirm data for forgot password"""
+        user = (
+            self.db.query(User)
+            .filter(
+                User.email == email,
+                User.cpf == cpf,
+                User.data_nascimento == data_nascimento,
+                User.is_active == True
+            )
+            .first()
+        )
+        return user
+
+    def change_password(self, user_id: str, new_password: str) -> bool:
+        """Change user password"""
+        user = self.get_by_id(user_id)
+        if not user:
+            return False
+        user.password_hash = self.hash_password(new_password)
+        self.db.commit()
+        return True
