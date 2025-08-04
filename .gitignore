@@ -3,6 +3,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# SQL
+crud_senac.db
+crud_senac.sqlite3
+
 # C extensions
 *.so
 
