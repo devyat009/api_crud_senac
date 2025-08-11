@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.controller import AuthController, UserController, ProductController
+from app.controller import AuthController, UserController, ProductController, ClientController
 from app.database import engine
 from app.models import models
 from app.utils.ErrorModel import create_error_response
@@ -73,6 +73,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 app.include_router(UserController.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(AuthController.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(ProductController.router)
+app.include_router(ClientController.router, prefix="/api/v1/clientes", tags=["clientes"])
 
 @app.get("/")
 def read_root():

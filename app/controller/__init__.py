@@ -1,1 +1,1 @@
-from . import UserController, AuthController
+from . import UserController, AuthController, ClientController, ProductController
