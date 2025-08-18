@@ -31,7 +31,6 @@ class ClientRepository:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=create_error_response(
-                    success=False,
                     message="Email, CPF ou CNPJ já cadastrado.",
                     field="email/cpf/cnpj",
                     code="unique_violation"
@@ -60,7 +59,6 @@ class ClientRepository:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=create_error_response(
-                    success=False,
                     message="Violação de unicidade ao criar cliente.",
                     field="email/cpf/cnpj",
                     code="unique_violation"
@@ -75,7 +73,6 @@ class ClientRepository:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=create_error_response(
-                    success=False,
                     message="Cliente não encontrado.",
                     field="id_client",
                     code="not_found"
@@ -90,7 +87,6 @@ class ClientRepository:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
                     detail=create_error_response(
-                        success=False,
                         message="Email, CPF ou CNPJ já cadastrado.",
                         field="email/cpf/cnpj",
                         code="unique_violation"
@@ -107,7 +103,6 @@ class ClientRepository:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=create_error_response(
-                    success=False,
                     message="Violação de unicidade ao atualizar cliente.",
                     field="email/cpf/cnpj",
                     code="unique_violation"
@@ -122,7 +117,6 @@ class ClientRepository:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=create_error_response(
-                    success=False,
                     message="Cliente não encontrado.",
                     field="id_client",
                     code="not_found"
