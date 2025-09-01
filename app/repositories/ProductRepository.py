@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import List, Optional
-from app.models import Product, ProductCreate, ProductUpdate
+from app.models import Product, ProductCreate, ProductUpdate, ProductCategory, ProductCategoryCreate, ProductBrand, ProductBrandCreate
 
 class ProductRepository:
     def __init__(self, db: Session):
@@ -193,3 +193,66 @@ class ProductRepository:
         except Exception as e:
             self.db.rollback()
             raise e
+          
+    # --- CATEGORY ---
+    def create_category(self, category_data):
+        """Create a new product category"""
+        # Verifica se já existe
+        existing = self.db.query(ProductCategory).filter(
+            ProductCategory.nome_categoria == category_data.nome_categoria
+        ).first()
+        if existing:
+            raise ValueError("Categoria já cadastrada")
+        db_category = ProductCategory(
+            nome_categoria=category_data.nome_categoria
+        )
+        self.db.add(db_category)
+        self.db.commit()
+        self.db.refresh(db_category)
+        return db_category
+
+    def get_all_categories(self):
+        """List all product categories"""
+        return self.db.query(ProductCategory).all()
+
+    def delete_category(self, category_id: str) -> bool:
+        """Delete a product category"""
+        category = self.db.query(ProductCategory).filter(
+            ProductCategory.id_category == category_id
+        ).first()
+        if not category:
+            return False
+        self.db.delete(category)
+        self.db.commit()
+        return True
+
+    # --- BRAND ---
+    def create_brand(self, brand_data):
+        """Create a new product brand"""
+        existing = self.db.query(ProductBrand).filter(
+            ProductBrand.nome_marca == brand_data.nome_marca
+        ).first()
+        if existing:
+            raise ValueError("Marca já cadastrada")
+        db_brand = ProductBrand(
+            nome_marca=brand_data.nome_marca
+        )
+        self.db.add(db_brand)
+        self.db.commit()
+        self.db.refresh(db_brand)
+        return db_brand
+
+    def get_all_brands(self):
+        """List all product brands"""
+        return self.db.query(ProductBrand).all()
+
+    def delete_brand(self, brand_id: str) -> bool:
+        """Delete a product brand"""
+        brand = self.db.query(ProductBrand).filter(
+            ProductBrand.id_brand == brand_id
+        ).first()
+        if not brand:
+            return False
+        self.db.delete(brand)
+        self.db.commit()
+        return True

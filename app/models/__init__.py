@@ -3,4 +3,4 @@ from .UserModel import *
 from .ProductModel import *
 
 # Models SQLAlchemy
-from .models import User, Product, Base
+from .models import User, Product, Base, ProductCategory, ProductBrand

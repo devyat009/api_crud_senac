@@ -46,7 +46,8 @@ class UserRepository:
             data_nascimento=user_data.data_nascimento,
             password_hash=hashed_password,
             cpf=user_data.cpf,
-            cnpj=user_data.cnpj if user_data.cnpj and user_data.cnpj.strip() else None
+            cnpj=user_data.cnpj if user_data.cnpj and user_data.cnpj.strip() else None,
+            role=user_data.role or "user"
         )
         
         self.db.add(db_user)

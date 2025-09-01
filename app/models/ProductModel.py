@@ -129,3 +129,39 @@ class ProductPublic(BaseModel):
     model_config = {
         "from_attributes": True
     }
+  
+  
+class ProductCategoryBase(BaseModel):
+    """Schema for product category data"""
+    nome_categoria: str
+
+class ProductCategoryCreate(ProductCategoryBase):
+    """Schema for product creation"""
+    pass
+
+class ProductCategoryResponse(ProductCategoryBase):
+    """Schema for product category response"""
+    id_category: str
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class ProductBrandBase(BaseModel):
+    """Schema for product brand data"""
+    nome_marca: str
+
+class ProductBrandCreate(ProductBrandBase):
+    """Schema for product creation"""
+    pass
+
+class ProductBrandResponse(ProductBrandBase):
+    """Schema for product brand response"""
+    id_brand: str
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
+    
