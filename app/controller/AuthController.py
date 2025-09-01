@@ -32,6 +32,7 @@ def login(user_credentials: UserLogin, repo: UserRepository = Depends(get_user_r
             "user_id": user.id_user,
             "email": user.email,
             "nome": user.nome,
+            "role": user.role
         }
         
     except HTTPException:

@@ -9,6 +9,7 @@ class UserBase(BaseModel):
     nome: str = Field(..., min_length=2, max_length=100)
     telefone: str = Field(..., min_length=10, max_length=15)
     data_nascimento: date
+    role: Optional[str] = "user"
     
     @field_validator('telefone')
     @classmethod

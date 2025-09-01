@@ -18,6 +18,7 @@ class User(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    role = Column(String(20), default="user", nullable=False)
 
 class Client(Base):
     __tablename__ = "clients"
@@ -53,6 +54,28 @@ class Product(Base):
     descricao = Column(Text, nullable=True)
     observacoes = Column(Text, nullable=True)
     
+    # Campos de controle
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=func.now(), nullable=False)
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    
+class ProductCategory(Base):
+    __tablename__ = "categories"
+
+    id_category = Column(String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    nome_categoria = Column(String(100), nullable=False, index=True)
+
+    # Campos de controle
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=func.now(), nullable=False)
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+class ProductBrand(Base):
+    __tablename__ = "brands"
+
+    id_brand = Column(String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    nome_marca = Column(String(100), nullable=False, index=True)
+
     # Campos de controle
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
