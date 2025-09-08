@@ -87,6 +87,188 @@ async def get_products(
             "timestamp": datetime.utcnow().isoformat()
         }
 
+# === CATEGORY AND BRAND ROUTES (must be before /{product_id}) ===
+@router.post('/category', response_model=dict)
+async def create_product_category(
+    category: ProductCategoryCreate,
+    repository: ProductRepository = Depends(get_product_repository)
+):
+    """Create a new product category"""
+    try:
+        db_category = repository.create_category(category)
+        return {
+            "success": True,
+            "message": "Categoria criada com sucesso",
+            "data": ProductCategoryResponse.model_validate(db_category),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except ValueError as e:
+        return {
+            "success": False,
+            "message": str(e),
+            "code": "VALIDATION_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": "Erro interno do servidor",
+            "code": "INTERNAL_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get('/category', response_model=dict)
+async def get_product_categories(
+    repository: ProductRepository = Depends(get_product_repository)
+):
+    """Get all product categories"""
+    try:
+        db_categories = repository.get_all_categories()
+        print(f"Debug - Categorias encontradas: {len(db_categories)}")
+        print(f"Debug - Primeira categoria: {db_categories[0].__dict__ if db_categories else 'Nenhuma'}")
+        
+        if not db_categories:
+            return {
+                "success": False,
+                "message": "Nenhuma categoria encontrada",
+                "code": "NOT_FOUND",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        
+        return {
+            "success": True,
+            "message": f"Encontradas {len(db_categories)} categorias",
+            "data": [ProductCategoryResponse.model_validate(cat) for cat in db_categories],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        print(f"Debug - Erro: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Erro interno do servidor: {str(e)}",
+            "code": "INTERNAL_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.delete('/category/{category_id}', response_model=dict)
+async def delete_product_category(
+    category_id: str,
+    repository: ProductRepository = Depends(get_product_repository)
+):
+    """Delete product category"""
+    try:
+        success = repository.delete_category(category_id)
+        if not success:
+            return {
+                "success": False,
+                "message": "Categoria não encontrada",
+                "code": "NOT_FOUND",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        return {
+            "success": True,
+            "message": "Categoria deletada com sucesso",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": "Erro interno do servidor",
+            "code": "INTERNAL_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.post('/brand', response_model=dict)
+async def create_product_brand(
+    brand: ProductBrandCreate,
+    repository: ProductRepository = Depends(get_product_repository)
+):
+    """Create a new product brand"""
+    try:
+        db_brand = repository.create_brand(brand)
+        return {
+            "success": True,
+            "message": "Marca criada com sucesso",
+            "data": ProductBrandResponse.model_validate(db_brand),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except ValueError as e:
+        return {
+            "success": False,
+            "message": str(e),
+            "code": "VALIDATION_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": "Erro interno do servidor",
+            "code": "INTERNAL_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get('/brand', response_model=dict)
+async def get_product_brands(
+    repository: ProductRepository = Depends(get_product_repository)
+):
+    """Get all product brands"""
+    try:
+        db_brands = repository.get_all_brands()
+        print(f"Debug - Marcas encontradas: {len(db_brands)}")
+        print(f"Debug - Primeira marca: {db_brands[0].__dict__ if db_brands else 'Nenhuma'}")
+        
+        if not db_brands:
+            return {
+                "success": False,
+                "message": "Nenhuma marca encontrada",
+                "code": "NOT_FOUND",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        
+        return {
+            "success": True,
+            "message": f"Encontradas {len(db_brands)} marcas",
+            "data": [ProductBrandResponse.model_validate(brand) for brand in db_brands],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        print(f"Debug - Erro: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Erro interno do servidor: {str(e)}",
+            "code": "INTERNAL_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.delete('/brand/{brand_id}', response_model=dict)
+async def delete_product_brand(
+    brand_id: str,
+    repository: ProductRepository = Depends(get_product_repository)
+):
+    """Delete product brand"""
+    try:
+        success = repository.delete_brand(brand_id)
+        if not success:
+            return {
+                "success": False,
+                "message": "Marca não encontrada",
+                "code": "NOT_FOUND",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        return {
+            "success": True,
+            "message": "Marca deletada com sucesso",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": "Erro interno do servidor",
+            "code": "INTERNAL_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+# === PRODUCT ROUTES ===
 @router.get("/{product_id}", response_model=dict)
 async def get_product(
     product_id: str,
@@ -287,159 +469,6 @@ async def delete_product(
             "timestamp": datetime.utcnow().isoformat()
         }
         
-    except Exception as e:
-        return {
-            "success": False,
-            "message": "Erro interno do servidor",
-            "code": "INTERNAL_ERROR",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-@router.post('/category', response_model=dict)
-async def create_product_category(
-    category: ProductCategoryCreate,
-    repository: ProductRepository = Depends(get_product_repository)
-):
-    """Create a new product category"""
-    try:
-        db_category = repository.create_category(category)
-        return {
-            "success": True,
-            "message": "Categoria criada com sucesso",
-            "data": ProductCategoryResponse.model_validate(db_category),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except ValueError as e:
-        return {
-            "success": False,
-            "message": str(e),
-            "code": "VALIDATION_ERROR",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "message": "Erro interno do servidor",
-            "code": "INTERNAL_ERROR",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get('/category', response_model=dict)
-async def get_product_categories(
-    repository: ProductRepository = Depends(get_product_repository)
-):
-    """Get all product categories"""
-    try:
-        db_categories = repository.get_all_categories()
-        return {
-            "success": True,
-            "data": [ProductCategoryResponse.model_validate(cat) for cat in db_categories],
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "message": "Erro interno do servidor",
-            "code": "INTERNAL_ERROR",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.delete('/category/{category_id}', response_model=dict)
-async def delete_product_category(
-    category_id: str,
-    repository: ProductRepository = Depends(get_product_repository)
-):
-    """Delete product category"""
-    try:
-        success = repository.delete_category(category_id)
-        if not success:
-            return {
-                "success": False,
-                "message": "Categoria não encontrada",
-                "code": "NOT_FOUND",
-                "timestamp": datetime.utcnow().isoformat()
-            }
-        return {
-            "success": True,
-            "message": "Categoria deletada com sucesso",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "message": "Erro interno do servidor",
-            "code": "INTERNAL_ERROR",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.post('/brand', response_model=dict)
-async def create_product_brand(
-    brand: ProductBrandCreate,
-    repository: ProductRepository = Depends(get_product_repository)
-):
-    """Create a new product brand"""
-    try:
-        db_brand = repository.create_brand(brand)
-        return {
-            "success": True,
-            "message": "Marca criada com sucesso",
-            "data": ProductBrandResponse.model_validate(db_brand),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except ValueError as e:
-        return {
-            "success": False,
-            "message": str(e),
-            "code": "VALIDATION_ERROR",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "message": "Erro interno do servidor",
-            "code": "INTERNAL_ERROR",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get('/brand', response_model=dict)
-async def get_product_brands(
-    repository: ProductRepository = Depends(get_product_repository)
-):
-    """Get all product brands"""
-    try:
-        db_brands = repository.get_all_brands()
-        return {
-            "success": True,
-            "data": [ProductBrandResponse.model_validate(brand) for brand in db_brands],
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "message": "Erro interno do servidor",
-            "code": "INTERNAL_ERROR",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.delete('/brand/{brand_id}', response_model=dict)
-async def delete_product_brand(
-    brand_id: str,
-    repository: ProductRepository = Depends(get_product_repository)
-):
-    """Delete product brand"""
-    try:
-        success = repository.delete_brand(brand_id)
-        if not success:
-            return {
-                "success": False,
-                "message": "Marca não encontrada",
-                "code": "NOT_FOUND",
-                "timestamp": datetime.utcnow().isoformat()
-            }
-        return {
-            "success": True,
-            "message": "Marca deletada com sucesso",
-            "timestamp": datetime.utcnow().isoformat()
-        }
     except Exception as e:
         return {
             "success": False,

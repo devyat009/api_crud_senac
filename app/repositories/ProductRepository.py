@@ -213,7 +213,10 @@ class ProductRepository:
 
     def get_all_categories(self):
         """List all product categories"""
-        return self.db.query(ProductCategory).all()
+        print("Debug - Executando query para categorias")
+        categories = self.db.query(ProductCategory).all()
+        print(f"Debug - Query retornou {len(categories)} categorias")
+        return categories
 
     def delete_category(self, category_id: str) -> bool:
         """Delete a product category"""
@@ -244,7 +247,10 @@ class ProductRepository:
 
     def get_all_brands(self):
         """List all product brands"""
-        return self.db.query(ProductBrand).all()
+        print("Debug - Executando query para marcas")
+        brands = self.db.query(ProductBrand).all()
+        print(f"Debug - Query retornou {len(brands)} marcas")
+        return brands
 
     def delete_brand(self, brand_id: str) -> bool:
         """Delete a product brand"""
