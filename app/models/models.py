@@ -1,5 +1,6 @@
 import uuid
-from sqlalchemy import Column, Integer, String, DateTime, Date, Boolean, Float, Text
+from sqlalchemy import Column, Integer, String, DateTime, Date, Boolean, Float, Text, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -43,8 +44,8 @@ class Product(Base):
     nome_item = Column(String(200), nullable=False, index=True)
     modelo = Column(String(100), nullable=False)
     codigo_sku = Column(String(50), nullable=True, index=True)
-    categoria = Column(String(50), nullable=False, index=True)
-    marca = Column(String(100), nullable=False, index=True)
+    id_categoria = Column(String(36), ForeignKey('categories.id_category'), nullable=False, index=True)
+    id_marca = Column(String(36), ForeignKey('brands.id_brand'), nullable=False, index=True)
     tamanho = Column(String(50), nullable=True)
     cor = Column(String(50), nullable=True)
     preco = Column(Float, nullable=False)
@@ -53,6 +54,10 @@ class Product(Base):
     quantidade_minima = Column(Integer, nullable=False, default=0)
     descricao = Column(Text, nullable=True)
     observacoes = Column(Text, nullable=True)
+    
+    # Relationships
+    categoria = relationship("ProductCategory", backref="products")
+    marca = relationship("ProductBrand", backref="products")
     
     # Campos de controle
     is_active = Column(Boolean, default=True, nullable=False)

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.database import get_db
 from app.models import ProductCreate, ProductUpdate, ProductResponse
-from app.models.ProductModel import ProductBrandCreate, ProductBrandResponse, ProductCategoryCreate, ProductCategoryResponse
+from app.models.ProductModel import *
 from app.repositories.ProductRepository import ProductRepository
 from datetime import datetime
 
@@ -124,8 +124,8 @@ async def get_product_categories(
     """Get all product categories"""
     try:
         db_categories = repository.get_all_categories()
-        print(f"Debug - Categorias encontradas: {len(db_categories)}")
-        print(f"Debug - Primeira categoria: {db_categories[0].__dict__ if db_categories else 'Nenhuma'}")
+        # print(f"Debug - Categorias encontradas: {len(db_categories)}")
+        # print(f"Debug - Primeira categoria: {db_categories[0].__dict__ if db_categories else 'Nenhuma'}")
         
         if not db_categories:
             return {
@@ -177,6 +177,36 @@ async def delete_product_category(
             "code": "INTERNAL_ERROR",
             "timestamp": datetime.utcnow().isoformat()
         }
+        
+@router.patch('/category/{category_id}', response_model=dict)
+async def update_product_category(
+    category_id: str,
+    category: ProductCategoryUpdate,
+    repository: ProductRepository = Depends(get_product_repository)
+):
+    """Update product category"""
+    try:
+        db_category = repository.update_category(category_id, category)
+        return {
+            "success": True,
+            "message": "Categoria atualizada com sucesso",
+            "data": ProductCategoryResponse.model_validate(db_category),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except ValueError as e:
+        return {
+            "success": False,
+            "message": str(e),
+            "code": "VALIDATION_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": "Erro interno do servidor",
+            "code": "INTERNAL_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
 
 @router.post('/brand', response_model=dict)
 async def create_product_brand(
@@ -214,8 +244,8 @@ async def get_product_brands(
     """Get all product brands"""
     try:
         db_brands = repository.get_all_brands()
-        print(f"Debug - Marcas encontradas: {len(db_brands)}")
-        print(f"Debug - Primeira marca: {db_brands[0].__dict__ if db_brands else 'Nenhuma'}")
+        # print(f"Debug - Marcas encontradas: {len(db_brands)}")
+        # print(f"Debug - Primeira marca: {db_brands[0].__dict__ if db_brands else 'Nenhuma'}")
         
         if not db_brands:
             return {
@@ -258,6 +288,36 @@ async def delete_product_brand(
         return {
             "success": True,
             "message": "Marca deletada com sucesso",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": "Erro interno do servidor",
+            "code": "INTERNAL_ERROR",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+@router.patch('/brand/{brand_id}', response_model=dict)
+async def update_product_brand(
+    brand_id: str,
+    brand: ProductBrandUpdate,
+    repository: ProductRepository = Depends(get_product_repository)
+):
+    """Update product brand"""
+    try:
+        db_brand = repository.update_brand(brand_id, brand)
+        return {
+            "success": True,
+            "message": "Marca atualizada com sucesso",
+            "data": ProductBrandResponse.model_validate(db_brand),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except ValueError as e:
+        return {
+            "success": False,
+            "message": str(e),
+            "code": "VALIDATION_ERROR",
             "timestamp": datetime.utcnow().isoformat()
         }
     except Exception as e:
