@@ -9,8 +9,8 @@ class ProductBase(BaseModel):
     nome_item: str = Field(..., min_length=2, max_length=200, description="Nome do produto")
     modelo: str = Field(..., min_length=1, max_length=100, description="Modelo do produto")
     codigo_sku: Optional[str] = Field(None, description="Código SKU (opcional)")
-    categoria: str = Field(..., description="Categoria do produto")
-    marca: str = Field(..., description="Marca do produto")
+    id_categoria: str = Field(..., description="ID da categoria do produto")
+    id_marca: str = Field(..., description="ID da marca do produto")
     tamanho: Optional[str] = Field(None, description="Tamanho do produto (opcional)")
     cor: Optional[str] = Field(None, description="Cor do produto (opcional)")
     preco: float = Field(..., ge=0, description="Preço do produto")
@@ -45,19 +45,19 @@ class ProductBase(BaseModel):
             raise ValueError('Modelo é obrigatório')
         return v.strip()
     
-    @field_validator('categoria')
-    @classmethod
-    def validate_categoria(cls, v):
-        categorias_validas = ['eletronicos', 'roupas', 'casa', 'esportes', 'livros', 'outros']
-        if v not in categorias_validas:
-            raise ValueError(f'Categoria deve ser uma das: {", ".join(categorias_validas)}')
-        return v
     
-    @field_validator('marca')
+    @field_validator('id_marca')
     @classmethod
-    def validate_marca(cls, v):
+    def validate_id_marca(cls, v):
         if not v or not v.strip():
-            raise ValueError('Marca é obrigatória')
+            raise ValueError('ID da marca é obrigatório')
+        return v.strip()
+    
+    @field_validator('id_categoria')
+    @classmethod
+    def validate_id_categoria(cls, v):
+        if not v or not v.strip():
+            raise ValueError('ID da categoria é obrigatório')
         return v.strip()
     
     @field_validator('preco')
@@ -77,8 +77,8 @@ class ProductUpdate(BaseModel):
     nome_item: Optional[str] = Field(None, min_length=2, max_length=200)
     modelo: Optional[str] = Field(None, min_length=1, max_length=100)
     codigo_sku: Optional[str] = None
-    categoria: Optional[str] = None
-    marca: Optional[str] = None
+    id_categoria: Optional[str] = None
+    id_marca: Optional[str] = None
     tamanho: Optional[str] = None
     cor: Optional[str] = None
     preco: Optional[float] = Field(None, ge=0)
@@ -88,14 +88,6 @@ class ProductUpdate(BaseModel):
     descricao: Optional[str] = None
     observacoes: Optional[str] = None
     
-    @field_validator('categoria')
-    @classmethod
-    def validate_categoria(cls, v):
-        if v:
-            categorias_validas = ['eletronicos', 'roupas', 'casa', 'esportes', 'livros', 'outros']
-            if v not in categorias_validas:
-                raise ValueError(f'Categoria deve ser uma das: {", ".join(categorias_validas)}')
-        return v
     
     @field_validator('preco')
     @classmethod
@@ -107,6 +99,8 @@ class ProductUpdate(BaseModel):
 class ProductResponse(ProductBase):
     """Schema for API response"""
     id_product: str
+    nome_categoria: Optional[str] = None  # Nome da categoria (via join)
+    nome_marca: Optional[str] = None      # Nome da marca (via join)
     created_at: datetime
     updated_at: Optional[datetime] = None
     is_active: bool = True
@@ -120,8 +114,8 @@ class ProductPublic(BaseModel):
     id_product: str 
     nome_item: str
     modelo: str
-    categoria: str
-    marca: str
+    nome_categoria: Optional[str] = None  # Nome da categoria
+    nome_marca: Optional[str] = None      # Nome da marca
     preco: float
     quantidade: int
     created_at: datetime
@@ -138,6 +132,9 @@ class ProductCategoryBase(BaseModel):
 class ProductCategoryCreate(ProductCategoryBase):
     """Schema for product creation"""
     pass
+class ProductCategoryUpdate(BaseModel):
+    """Schema for product category update - all fields are optional"""
+    nome_categoria: Optional[str] = None
 
 class ProductCategoryResponse(ProductCategoryBase):
     """Schema for product category response"""
@@ -155,6 +152,10 @@ class ProductBrandBase(BaseModel):
 class ProductBrandCreate(ProductBrandBase):
     """Schema for product creation"""
     pass
+  
+class ProductBrandUpdate(BaseModel):
+    """Schema for product brand update - all fields are optional"""
+    nome_marca: Optional[str] = None
 
 class ProductBrandResponse(ProductBrandBase):
     """Schema for product brand response"""
