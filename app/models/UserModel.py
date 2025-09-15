@@ -60,6 +60,7 @@ class UserUpdate(BaseModel):
     nome: Optional[str] = Field(None, min_length=2, max_length=100)
     telefone: Optional[str] = None
     data_nascimento: Optional[date] = None
+    role: Optional[str] = None
     password: Optional[str] = Field(None, min_length=8)
     cpf: Optional[str] = Field(None, pattern=r'^\d{11}$')
     cnpj: Optional[str] = Field(None, pattern=r'^\d{14}$')
