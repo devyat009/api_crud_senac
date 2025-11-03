@@ -39,6 +39,7 @@ api_crud_senac/
 ├─ crud_senac.db            # SQLite (desenvolvimento)
 ├─ main.py                  # Inicialização da aplicação FastAPI
 ├─ requirements.txt         # Dependências Python
+├─ test.py                  # Ferramenta para teste em massa de items
 └─ README.md
 ```
 
@@ -65,7 +66,7 @@ python -m venv venv
 source ./venv/Scripts/activate
 
 # Linux/MacOS
-source venv/bin/activate
+source venv/Scripts/activate
 ```
 
 3) Instalar dependências
